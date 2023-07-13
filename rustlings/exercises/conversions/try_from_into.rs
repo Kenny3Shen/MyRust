@@ -23,8 +23,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need to create an implementation for a tuple of three integers,
@@ -38,23 +36,17 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
-        let t: u8 = match tuple.0.try_into() {
-            Ok(x) => x,
-            Err(_) => return Err(IntoColorError::IntConversion),
-        };
-        let t: u8 = match tuple.1.try_into() {
-            Ok(x) => x,
-            Err(_) => return Err(IntoColorError::IntConversion),
-        };
-        let t: u8 = match tuple.2.try_into() {
-            Ok(x) => x,
-            Err(_) => return Err(IntoColorError::IntConversion),
-        };
-
+        let (r, g, b) = tuple;
+        let u8_range = 0..256;
+        for elem in &[r,g,b] {
+            if !u8_range.contains(elem) {
+                return Err(IntoColorError::IntConversion);
+            }
+        }
         Ok(Color {
-            red: tuple.0 as u8,
-            green: tuple.1 as u8,
-            blue: tuple.2 as u8,
+            red: r as u8,
+            green: g as u8,
+            blue: b as u8,
         })
     }
 }
@@ -63,13 +55,12 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
-        for n in arr {
-            let n: u8 = match n.try_into() {
-                Ok(x) => x,
-                Err(_) => return Err(IntoColorError::IntConversion),
-            };
+        let u8_range = 0..256;
+        for elem in &arr {
+            if !u8_range.contains(elem) {
+                return Err(IntoColorError::IntConversion);
+            }
         }
-
         Ok(Color {
             red: arr[0] as u8,
             green: arr[1] as u8,
@@ -85,11 +76,11 @@ impl TryFrom<&[i16]> for Color {
         if slice.len() != 3 {
             return Err(IntoColorError::BadLen);
         }
-        for n in slice {
-            let n: u8 = match (*n).try_into() {
-                Ok(x) => x,
-                Err(_) => return Err(IntoColorError::IntConversion),
-            };
+        let u8_range = 0..256;
+        for elem in slice {
+            if !u8_range.contains(elem) {
+                return Err(IntoColorError::IntConversion);
+            }
         }
 
         Ok(Color {

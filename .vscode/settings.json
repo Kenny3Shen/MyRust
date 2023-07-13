@@ -2,5 +2,11 @@
     "cSpell.words": [
         "prost",
         "proto"
+    ],
+    "rust-analyzer.linkedProjects": [
+        ".\\web\\http\\Cargo.toml",
+        ".\\web\\http\\Cargo.toml",
+        ".\\web\\httpserver\\Cargo.toml",
+        ".\\web\\httpserver\\Cargo.toml"
     ]
 }
