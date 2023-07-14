@@ -17,3 +17,5 @@
 /pow/target/
 /kv/target/
 /web/target/
+/actix-web/target/
+/db/target/
