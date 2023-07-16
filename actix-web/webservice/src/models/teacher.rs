@@ -5,15 +5,15 @@ use serde::{Deserialize, Serialize};
 pub struct Teacher {
     pub id: i32,
     pub name: String,
-    pub picture_url: String,
-    pub profile: String,
+    pub picture_url: Option<String>,
+    pub profile: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct CreateTeacher {
     pub name: String,
-    pub picture_url: String,
-    pub profile: String,
+    pub picture_url: Option<String>,
+    pub profile: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

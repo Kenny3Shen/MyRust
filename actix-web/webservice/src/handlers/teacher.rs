@@ -109,8 +109,8 @@ mod tests {
         });
         let new_teacher = CreateTeacher {
             name: "Test Teacher".to_string(),
-            picture_url: "http://test_teacher.edu".into(),
-            profile: "A teacher created for test".into(),
+            picture_url: Some("http://test_teacher.edu".into()),
+            profile: None,
         };
         let params = web::Json(new_teacher);
         let resp = post_new_teacher(app_state, params).await.unwrap();
