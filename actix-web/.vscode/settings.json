@@ -1,8 +1,7 @@
 {
     "rust-analyzer.linkedProjects": [
-        ".\\webservice\\Cargo.toml",
-        ".\\webservice\\Cargo.toml",
-        ".\\webservice\\Cargo.toml"
+        "/mnt/d/MyRust/actix-web/webservice/Cargo.toml",
+        "./webservice/Cargo.toml",
     ],
     "cSpell.words": [
         "chrono",
