@@ -1,0 +1,12 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+tick                    time:   [80.827 µs 83.849 µs 87.195 µs]
+                        change: [-0.9732% +3.2356% +7.7126%] (p = 0.15 > 0.05)
+                        No change in performance detected.
+Found 7 outliers among 100 measurements (7.00%)
+  3 (3.00%) high mild
+  4 (4.00%) high severe
+

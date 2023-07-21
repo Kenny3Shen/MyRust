@@ -14,8 +14,11 @@
 /rustlings/public/
 
 /flappy/target/
-/pow/target/
-/kv/target/
 /web/target/
 /actix-web/target/
 /db/target/
+/wasm-game-of-life/targrt/
+/wasm-game-of-life/node_modules/
+/wasm-game-of-life/www/node_modules/
+/substrate-node-template/
+node_modules

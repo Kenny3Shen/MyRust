@@ -1,0 +1,12 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+tick                    time:   [77.027 µs 78.556 µs 80.328 µs]
+                        change: [-9.0540% -4.7680% -0.2992%] (p = 0.04 < 0.05)
+                        Change within noise threshold.
+Found 14 outliers among 100 measurements (14.00%)
+  5 (5.00%) high mild
+  9 (9.00%) high severe
+
