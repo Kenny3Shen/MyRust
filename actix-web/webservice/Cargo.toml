@@ -6,6 +6,7 @@ default-run = "teacher-service"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+actix-cors = "0.6.4"
 actix-web = "4.3.1"
 actix-rt = "2.8.0"
 serde = { version = "1.0.171", features = ["derive"] }
