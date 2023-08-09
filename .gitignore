@@ -1,8 +1,4 @@
 /web/target/
 /actix-web/target/
-/wasm-game-of-life/targrt/
-/wasm-game-of-life/www/
-/wasm-game-of-life/node_modules/
-/wasm-game-of-life/www/node_modules/
 /substrate-node-template/
 /axum-websocket-chat/target/
