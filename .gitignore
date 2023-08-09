@@ -4,3 +4,4 @@
 /wasm-game-of-life/node_modules/
 /wasm-game-of-life/www/node_modules/
 /substrate-node-template/
+/axum-websocket-chat/target/
