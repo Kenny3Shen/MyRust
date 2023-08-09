@@ -1,46 +1,22 @@
-use std::{collections::HashMap, net::SocketAddr, sync::Arc};
+mod handler;
+mod models;
 
+use crate::handler::handler;
+use crate::models::{AppState, MessagePayLoad};
 use axum::{
-    extract::{
-        ws::{Message, WebSocket},
-        ConnectInfo, State, WebSocketUpgrade,
-    },
-    response::Response,
+    extract::ws::{Message, WebSocket},
     routing::get,
     Router,
 };
-use futures::{
-    stream::{SplitSink, SplitStream},
-    SinkExt, StreamExt,
-};
-use serde::{Deserialize, Serialize};
+use futures::{stream::SplitSink, SinkExt};
 use serde_json::json;
+use std::{collections::HashMap, net::SocketAddr, sync::Arc};
 use tokio::sync::{
-    mpsc::{self, Sender},
+    mpsc::{self},
     RwLock,
 };
+
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
-
-#[derive(Clone)]
-pub struct AppState {
-    pub clients: Arc<RwLock<HashMap<u16, SplitSink<WebSocket, Message>>>>,
-    pub sender_tx: Sender<MessagePayLoad>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct MessagePayLoad {
-    msg_type: MsgType,
-    from: Option<u16>,
-    to: Option<u16>,
-    data: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub enum MsgType {
-    Message,
-    Command,
-    Reply,
-}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -70,24 +46,23 @@ async fn main() -> Result<()> {
             }
         }
     });
-    // sender_task
 
     //server_task
-    let mut server_task = tokio::spawn(async move {});
-
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
-        .await
-        .unwrap();
+    let mut server_task = tokio::spawn(async move {
+        axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+            .serve(app.into_make_service_with_connect_info::<SocketAddr>())
+            .await
+            .unwrap();
+    });
 
     tokio::select! {
             _ = (&mut sender_task) => {
                 println!("Sender Exited");
-                sender_task.abort();
+                server_task.abort();
             },
             _ = (&mut server_task) => {
                 println!("Sender Exited");
-                server_task.abort();
+                sender_task.abort();
             },
             _ = tokio::signal::ctrl_c() => {
                 println!("Ctrl + C Recevied, Exited");
@@ -97,65 +72,6 @@ async fn main() -> Result<()> {
     }
 
     Ok(())
-}
-
-async fn handler(
-    ws: WebSocketUpgrade,
-    State(app_state): State<AppState>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
-) -> Response {
-    ws.on_upgrade(move |socket| handle_socket(socket, app_state, addr))
-}
-
-async fn handle_socket(socket: WebSocket, app_state: AppState, addr: SocketAddr) {
-    let (sender, receiver) = socket.split();
-
-    app_state.clients.write().await.insert(addr.port(), sender);
-
-    // let (sender_tx, sender_rx) = mpsc::channel::<Message>(1000);
-
-    // tokio::spawn(write(sender, sender_rx));
-    tokio::spawn(read(receiver, app_state, addr.port()));
-}
-
-async fn read(mut recevier: SplitStream<WebSocket>, app_state: AppState, client_port: u16) {
-    while let Some(Ok(msg)) = recevier.next().await {
-        match msg {
-            Message::Text(text) => {
-                println!("{text}");
-                // sender_tx.send(Message::Text(text)).await.unwrap();
-                let mut payload = serde_json::from_str::<MessagePayLoad>(&text).unwrap();
-                match payload.msg_type {
-                    MsgType::Message => {
-                        payload.from = Some(client_port);
-                        app_state.sender_tx.send(payload).await.unwrap();
-                    }
-                    MsgType::Command => {
-                        if payload.data == "list" {
-                            let clients = app_state
-                                .clients
-                                .read()
-                                .await
-                                .iter()
-                                .map(|(k, _)| k.clone())
-                                .collect::<Vec<u16>>();
-                            let reply = MessagePayLoad {
-                                msg_type: MsgType::Reply,
-                                from: None,
-                                to: Some(client_port),
-                                data: json!(clients).to_string(),
-                            };
-                            app_state.sender_tx.send(reply).await.unwrap();
-                        }
-                    }
-                    _ => {}
-                }
-            }
-            Message::Close(_) => break,
-            _ => {}
-        }
-    }
-    app_state.clients.write().await.remove(&client_port);
 }
 
 /* async fn write(mut sender: SplitSink<WebSocket, Message>, mut sender_rx: Receiver<Message>) {
