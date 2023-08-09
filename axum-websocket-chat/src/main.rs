@@ -26,6 +26,7 @@ pub struct AppState {
     pub clients: Arc<RwLock<HashMap<u16, SplitSink<WebSocket, Message>>>>,
     pub sender_tx: Sender<MessagePayLoad>,
 }
+
 #[derive(Serialize, Deserialize)]
 pub struct MessagePayLoad {
     msg_type: MsgType,
@@ -40,6 +41,7 @@ pub enum MsgType {
     Command,
     Reply,
 }
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let (sender_tx, mut sender_rx) = mpsc::channel::<MessagePayLoad>(1000);
