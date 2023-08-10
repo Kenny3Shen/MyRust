@@ -65,7 +65,7 @@ async fn main() -> Result<()> {
                 sender_task.abort();
             },
             _ = tokio::signal::ctrl_c() => {
-                println!("Ctrl + C Recevied, Exited");
+                println!("Ctrl + C Received, Exited");
                 sender_task.abort();
                 server_task.abort();
         }
