@@ -74,24 +74,3 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-/* async fn write(mut sender: SplitSink<WebSocket, Message>, mut sender_rx: Receiver<Message>) {
-    while let Some(msg) = sender_rx.next().await {
-        sender.send(msg).await.unwrap();
-    }
-} */
-
-/* async fn handle_socket(mut socket: WebSocket) {
-    while let Some(msg) = socket.recv().await {
-        let msg = if let Ok(msg) = msg {
-            msg
-        } else {
-            // client disconnected
-            return;
-        };
-
-        // send msg error
-        if socket.send(msg).await.is_err() {
-            return;
-        }
-    }
-} */
