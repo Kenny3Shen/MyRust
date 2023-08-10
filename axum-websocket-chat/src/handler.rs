@@ -1,11 +1,15 @@
-use crate::MessagePayLoad;
+use crate::models::{AppState, MessagePayLoad, MsgType};
 use std::net::SocketAddr;
 
-use axum::{extract::{WebSocketUpgrade, State, ConnectInfo, ws::{WebSocket, Message}}, response::Response};
-use futures::{StreamExt, stream::SplitStream};
+use axum::{
+    extract::{
+        ws::{Message, WebSocket},
+        ConnectInfo, State, WebSocketUpgrade,
+    },
+    response::Response,
+};
+use futures::{stream::SplitStream, StreamExt};
 use serde_json::json;
-
-use crate::models::{AppState, MsgType};
 
 pub async fn handler(
     ws: WebSocketUpgrade,
