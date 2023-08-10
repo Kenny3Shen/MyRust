@@ -30,8 +30,8 @@ async fn handle_socket(socket: WebSocket, app_state: AppState, addr: SocketAddr)
     tokio::spawn(read(receiver, app_state, addr.port()));
 }
 
-async fn read(mut recevier: SplitStream<WebSocket>, app_state: AppState, client_port: u16) {
-    while let Some(Ok(msg)) = recevier.next().await {
+async fn read(mut receiver: SplitStream<WebSocket>, app_state: AppState, client_port: u16) {
+    while let Some(Ok(msg)) = receiver.next().await {
         match msg {
             Message::Text(text) => {
                 println!("{text}");
