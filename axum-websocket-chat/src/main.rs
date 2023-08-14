@@ -8,13 +8,11 @@ use axum::{
     routing::get,
     Router,
 };
+use dashmap::DashMap;
 use futures::{stream::SplitSink, SinkExt};
 use serde_json::json;
-use std::{collections::HashMap, net::SocketAddr, sync::Arc};
-use tokio::sync::{
-    mpsc::{self},
-    RwLock,
-};
+use std::{net::SocketAddr, sync::Arc};
+use tokio::sync::mpsc::{self};
 
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
@@ -23,9 +21,10 @@ async fn main() -> Result<()> {
     let (sender_tx, mut sender_rx) = mpsc::channel::<MessagePayLoad>(1000);
 
     let app_state = AppState {
-        clients: Arc::new(RwLock::new(
-            HashMap::<u16, SplitSink<WebSocket, Message>>::new(),
-        )),
+        // clients: Arc::new(RwLock::new(
+        //     HashMap::<u16, SplitSink<WebSocket, Message>>::new(),
+        // )),
+        clients: Arc::new(DashMap::<u16, SplitSink<WebSocket, Message>>::new()),
         sender_tx,
     };
 
@@ -37,8 +36,9 @@ async fn main() -> Result<()> {
     let mut sender_task = tokio::spawn(async move {
         while let Some(payload) = sender_rx.recv().await {
             if let Some(to) = payload.to {
-                if let Some(sender) = app_state.clients.write().await.get_mut(&to) {
+                if let Some(mut sender) = app_state.clients.get_mut(&to) {
                     sender
+                        .value_mut()
                         .send(Message::Text(json!(payload).to_string()))
                         .await
                         .unwrap();
@@ -73,4 +73,3 @@ async fn main() -> Result<()> {
 
     Ok(())
 }
-

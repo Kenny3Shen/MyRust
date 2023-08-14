@@ -22,7 +22,7 @@ pub async fn handler(
 async fn handle_socket(socket: WebSocket, app_state: AppState, addr: SocketAddr) {
     let (sender, receiver) = socket.split();
 
-    app_state.clients.write().await.insert(addr.port(), sender);
+    app_state.clients.insert(addr.port(), sender);
 
     // let (sender_tx, sender_rx) = mpsc::channel::<Message>(1000);
 
@@ -46,10 +46,8 @@ async fn read(mut receiver: SplitStream<WebSocket>, app_state: AppState, client_
                         if payload.data == "list" {
                             let clients = app_state
                                 .clients
-                                .read()
-                                .await
                                 .iter()
-                                .map(|(k, _)| k.clone())
+                                .map(|x| x.key().clone())
                                 .collect::<Vec<u16>>();
                             let reply = MessagePayLoad {
                                 msg_type: MsgType::Reply,
@@ -67,5 +65,5 @@ async fn read(mut receiver: SplitStream<WebSocket>, app_state: AppState, client_
             _ => {}
         }
     }
-    app_state.clients.write().await.remove(&client_port);
+    app_state.clients.remove(&client_port);
 }
