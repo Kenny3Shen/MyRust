@@ -9,9 +9,9 @@ participant R as Receiver Thread
 M ->>+ S: Start Thread
 U ->>+ WS: User Connect
 note right of WS: Save User Sender to State
-WS ->>+ R: Start Rceiver Thread
+WS ->>+ R: Start Receiver Thread
 
-note right of R: Loop recevie Message
+note right of R: Loop receive Message
 U ->> R: command:list
 R -> R: Get User List
 R -->> S: Send Response Message
@@ -23,7 +23,7 @@ R -->> S: Forward Message
 S -> S: Search User B's sender from state
 S -->>U: Forward User
 
-R ->>- WS: Finish Rceiver Thread
+R ->>- WS: Finish Receiver Thread
 note right of WS: Delete User Sender from State
 S ->>- M: Finish Thread
 
